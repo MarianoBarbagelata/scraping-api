@@ -1,6 +1,7 @@
 *.pyc
 __pycache__/
 .env
+*.exe
 venv
 build
 app.spec
