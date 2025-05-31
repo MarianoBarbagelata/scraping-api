@@ -36,10 +36,18 @@ def main():
     print("Archivo prices.json actualizado.")
 
     try:
-        subprocess.run(["git", "add", "prices.json"], check=True)
-        subprocess.run(["git", "commit", "-m", "Actualizo prices.json con nuevos valores"], check=True)
-        subprocess.run(["git", "push"], check=True)
-        print("Cambios subidos a GitHub correctamente.")
+        result = subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True)
+
+        file_changed = result.stdout.strip().splitlines()
+        changes_in_prices = any('prices.json' in linea for linea in file_changed)
+
+        if changes_in_prices:
+            subprocess.run(['git', 'add', 'prices.json'], check=True)
+            subprocess.run(['git', 'commit', '-m', 'Actualizo prices.json con nuevos valores'], check=True)
+            subprocess.run(['git', 'push'], check=True)
+            print("Cambios en prices.json commiteados y enviados.")
+        else:
+            print("No hay cambios en prices.json para commitear.")
     except subprocess.CalledProcessError as e:
         print("Error al hacer git commit/push:", e)
 
